@@ -4,7 +4,6 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>DeepXCoin</title>
-<script src="https://sad.adsgram.ai/js/sad.min.js"></script>
 <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
@@ -852,17 +851,14 @@ function resumeMining(){
 }
 
 // =================== AD SIMULATION ===================
-// =================== ADSGRAM ===================
+// =================== AD SYSTEM ===================
 const REWARDED_AD_ID = 'task-34117';
 const BANNER_AD_ID   = 'task-34118';
 
 function initBannerAd(){
-  try{
-    if(window.Adsgram){
-      const banner = Adsgram.init({blockId: BANNER_AD_ID, type: 'banner'});
-      banner.show().catch(()=>{});
-    }
-  }catch(e){}
+  // Banner shown as placeholder - Adsgram loads in Telegram environment
+  const wrap = document.getElementById('adsgramBannerWrap');
+  if(wrap) wrap.innerHTML = '<div style="padding:10px;text-align:center;font-size:11px;color:var(--text3)">📢 Advertisement</div>';
 }
 
 function watchAdAndContinue(modalId, barId, noteId, btnId, callback){
@@ -870,44 +866,36 @@ function watchAdAndContinue(modalId, barId, noteId, btnId, callback){
   const bar  = document.getElementById(barId);
   const note = document.getElementById(noteId);
 
-  if(window.Adsgram){
-    btn.disabled = true;
-    btn.textContent = 'Loading ad...';
-    try{
-      const AdController = Adsgram.init({blockId: REWARDED_AD_ID});
+  // Try Adsgram if available in Telegram environment
+  try{
+    if(window.Adsgram && window.Telegram && window.Telegram.WebApp){
+      btn.disabled = true;
+      btn.textContent = 'Loading ad...';
+      const AdController = window.Adsgram.init({blockId: REWARDED_AD_ID});
       AdController.addEventListener('onReward', ()=>{
         btn.disabled = false;
-        btn.textContent = 'Continue ✅';
-        setTimeout(()=>{
-          btn.textContent = 'Watch & Continue ▶';
-          callback();
-        }, 400);
+        btn.textContent = 'Watch & Continue ▶';
+        callback();
       });
       AdController.addEventListener('onError', ()=>{
         btn.disabled = false;
-        btn.textContent = 'Retry ▶';
-        showToast('Ad failed. Try again.');
+        btn.textContent = 'Watch & Continue ▶';
+        showToast('Ad unavailable. Try again.');
       });
       AdController.addEventListener('onSkip', ()=>{
         btn.disabled = false;
         btn.textContent = 'Watch & Continue ▶';
-        showToast('Please watch the full ad.');
+        showToast('Watch the full ad to claim.');
       });
       AdController.show();
-    } catch(e){
-      // Fallback simulation if Adsgram not available
-      _simulateAd(btn, bar, note, callback);
+      return;
     }
-  } else {
-    // Simulation fallback
-    _simulateAd(btn, bar, note, callback);
-  }
-}
+  } catch(e){ /* fall through to simulation */ }
 
-function _simulateAd(btn, bar, note, callback){
+  // Simulation (browser testing / fallback)
   btn.disabled = true;
   btn.textContent = 'Ad playing...';
-  if(bar){ bar.parentElement.style.display='block'; }
+  if(bar && bar.parentElement){ bar.parentElement.style.display='block'; }
   if(note){ note.style.display='block'; note.textContent='Ad playing... please wait'; }
   let pct = 0;
   const iv = setInterval(()=>{
@@ -915,14 +903,11 @@ function _simulateAd(btn, bar, note, callback){
     if(bar) bar.style.width = Math.min(100,pct)+'%';
     if(pct >= 100){
       clearInterval(iv);
-      if(bar){ bar.style.width='0%'; bar.parentElement.style.display='none'; }
+      if(bar){ bar.style.width='0%'; if(bar.parentElement) bar.parentElement.style.display='none'; }
       if(note){ note.style.display='none'; note.textContent='Ad playing... please wait'; }
       btn.disabled = false;
-      btn.textContent = 'Continue ✅';
-      setTimeout(()=>{
-        btn.textContent = 'Watch & Continue ▶';
-        callback();
-      }, 400);
+      btn.textContent = 'Watch & Continue ▶';
+      callback();
     }
   }, 100);
 }
