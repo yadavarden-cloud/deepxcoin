@@ -177,6 +177,18 @@ input[type=file]{display:none}
 </head>
 <body>
 
+<script>
+// Suppress Adsgram errors from showing native popups
+window.addEventListener('unhandledrejection', function(e){
+  if(e.reason && e.reason.toString().indexOf('Adsgram') !== -1){ e.preventDefault(); }
+});
+window.onerror = (function(orig){
+  return function(msg, src, line, col, err){
+    if(msg && msg.toString().indexOf('Adsgram') !== -1) return true;
+    if(orig) return orig(msg,src,line,col,err);
+  };
+})(window.onerror);
+</script>
 <div class="topbar">
   <div class="logo">DeepXCoin</div>
   <div class="spbadge" id="spBadge">12.5/s</div>
@@ -418,12 +430,12 @@ input[type=file]{display:none}
 // ====================================================
 // CONSTANTS (declared first — before any usage)
 // ====================================================
-var COIN_VALUE       = 0.0012;
+var COIN_VALUE       = 0.012;
 var BASE_AUTO        = 12.5;
 var BASE_TAP         = 50;
 var MINE_DUR         = 4 * 3600;
 var EARN_RESET       = 6 * 3600 * 1000;
-var REWARDED_ID      = '34117';
+var REWARDED_ID      = 'task-34117';
 var BANNER_ID        = 'task-34118';
 var VALID_DROPS      = []; // admin adds valid dropcodes here
 var SAVE_KEY         = 'dxc_v3';
@@ -646,6 +658,21 @@ function resumeMining(){
 // ====================================================
 // ADSGRAM - REWARDED AD
 // ====================================================
+function simulateAd(btn, bar, note, callback) {
+  btn.disabled=true; btn.textContent='Ad playing...';
+  if(bar){bar.parentElement.style.display='block'; bar.style.width='0%';}
+  if(note) note.style.display='block';
+  var pct=0, iv=setInterval(function(){
+    pct+=100/30; if(bar) bar.style.width=Math.min(100,pct)+'%';
+    if(pct>=100){
+      clearInterval(iv);
+      if(bar){bar.style.width='0%'; bar.parentElement.style.display='none';}
+      if(note) note.style.display='none';
+      btn.disabled=false; btn.textContent='Watch & Continue \u25b6';
+      callback();
+    }
+  },100);
+}
 function showAd(btnId, barId, noteId, callback) {
   var btn=document.getElementById(btnId);
   var bar=document.getElementById(barId);
@@ -660,11 +687,15 @@ function showAd(btnId, barId, noteId, callback) {
         callback();
       }).catch(function(res) {
         btn.disabled=false; btn.textContent='Watch & Continue \u25b6';
-        if (res && res.error) toast('Ad not available, try again.');
-        else toast('Watch the full ad to claim!');
+        // On any error/skip just run simulation so user is not stuck
+        simulateAd(btn, bar, note, callback);
       });
       return;
-    } catch(err) { console.warn('Adsgram err:', err); }
+    } catch(err) {
+      console.warn('Adsgram err:', err);
+      btn.disabled=false; btn.textContent='Watch & Continue \u25b6';
+      // fallthrough to simulation
+    }
   }
   // Simulation fallback
   btn.disabled=true; btn.textContent='Ad playing...';
