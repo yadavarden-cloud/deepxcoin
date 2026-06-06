@@ -4,7 +4,6 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
 <title>DeepXCoin</title>
-<script src="https://sad.adsgram.ai/js/sad.min.js"></script>
 <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@400;600;700&display=swap" rel="stylesheet">
 <style>
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
@@ -177,18 +176,6 @@ input[type=file]{display:none}
 </head>
 <body>
 
-<script>
-// Suppress Adsgram errors from showing native popups
-window.addEventListener('unhandledrejection', function(e){
-  if(e.reason && e.reason.toString().indexOf('Adsgram') !== -1){ e.preventDefault(); }
-});
-window.onerror = (function(orig){
-  return function(msg, src, line, col, err){
-    if(msg && msg.toString().indexOf('Adsgram') !== -1) return true;
-    if(orig) return orig(msg,src,line,col,err);
-  };
-})(window.onerror);
-</script>
 <div class="topbar">
   <div class="logo">DeepXCoin</div>
   <div class="spbadge" id="spBadge">12.5/s</div>
@@ -1050,4 +1037,4 @@ if(window.Telegram&&window.Telegram.WebApp){
 setInterval(function(){if(G.mining) saveState();},30000);
 </script>
 </body>
-</html>
+</html> 
