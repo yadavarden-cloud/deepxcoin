@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>DeepXCoin</title>
+<script src="https://sad.adsgram.ai/js/sad.min.js"></script>
 <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
@@ -223,6 +224,23 @@ body{font-family:'Rajdhani',sans-serif;background:var(--bg);color:var(--text);mi
 .emis-btn.eb-done{background:#F0FDF4;color:var(--green);border:1px solid #BBF7D0;cursor:default}
 .emis-btn.eb-lock{background:var(--bg3);color:var(--text3);border:1px solid var(--border);cursor:not-allowed}
 
+
+/* SOCIAL TASK CARDS */
+.social-task-card{display:flex;align-items:center;gap:12px;background:var(--bg2);border:1px solid var(--border);border-radius:14px;padding:12px 14px}
+.social-task-card.done-task{background:#F0FDF4;border-color:#BBF7D0}
+.stask-btn{padding:8px 12px;border-radius:9px;border:none;background:linear-gradient(135deg,var(--gold-dark),var(--gold));color:#fff;font-family:'Rajdhani',sans-serif;font-size:13px;font-weight:700;cursor:pointer;flex-shrink:0;white-space:nowrap}
+.stask-btn.done-stask{background:#F0FDF4;color:var(--green);border:1px solid #BBF7D0;cursor:default}
+
+/* WITHDRAWAL MODAL FORM */
+.wd-form{display:flex;flex-direction:column;gap:10px;margin:14px 0}
+.wd-input{width:100%;padding:12px 14px;border:1.5px solid var(--border);border-radius:10px;font-family:'Rajdhani',sans-serif;font-size:14px;color:var(--text);background:var(--bg2);outline:none}
+.wd-input:focus{border-color:var(--gold)}
+.wd-input::placeholder{color:var(--text3)}
+.wd-row{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.wd-label{font-size:12px;font-weight:700;color:var(--text2);margin-bottom:3px;letter-spacing:0.3px}
+.wd-error{color:var(--red);font-size:12px;font-weight:600;text-align:center;padding:6px;background:#FEF2F2;border-radius:8px;display:none}
+.wd-success{color:var(--green);font-size:13px;font-weight:600;text-align:center;padding:10px;background:#F0FDF4;border-radius:8px;display:none;line-height:1.5}
+
 </style>
 </head>
 <body>
@@ -365,7 +383,7 @@ body{font-family:'Rajdhani',sans-serif;background:var(--bg);color:var(--text);mi
     <!-- REFERRAL -->
     <div class="referral-card">
       <div class="ref-title">🎁 Invite Friends, Earn More!</div>
-      <div class="ref-sub">Share your referral link. Earn 500 Deep Coins for every friend who joins and mines!</div>
+      <div class="ref-sub">Share your referral link. Earn ₹10 for every friend who joins! (Credited next day)</div>
       <div class="ref-link-box" id="refLinkDisplay">t.me/Deepxcoinbot?start=ref_DEEPUSER</div>
       <div class="ref-btns">
         <button class="ref-btn copy-btn" onclick="copyRef()">📋 Copy Link</button>
@@ -387,38 +405,56 @@ body{font-family:'Rajdhani',sans-serif;background:var(--bg);color:var(--text);mi
 <!-- TASKS PAGE -->
 <div class="page" id="page-tasks">
   <div class="tasks-page">
-    <!-- SOCIAL LINKS -->
-    <div class="section-title" style="padding:14px 16px 8px;font-size:13px;font-weight:700;letter-spacing:1px;text-transform:uppercase">🔗 Follow &amp; Join</div>
-    <div style="padding:0 16px 12px;display:flex;flex-direction:column;gap:8px">
-      <a href="https://t.me/bullxminingbot/bullxmining" target="_blank" class="social-link-card">
-        <div class="social-icon" style="background:#229ED9">🐂</div>
-        <div class="social-info"><div class="social-name">BullX Mining</div><div class="social-sub">Join on Telegram</div></div>
-        <div class="social-arrow">→</div>
-      </a>
-      <a href="https://t.me/Tap2scorpiobot/Scorpiomining" target="_blank" class="social-link-card">
-        <div class="social-icon" style="background:#5B4FCF">🦂</div>
-        <div class="social-info"><div class="social-name">Scorpio Miner</div><div class="social-sub">Join on Telegram</div></div>
-        <div class="social-arrow">→</div>
-      </a>
-      <a href="https://www.instagram.com/earnbeuro?igsh=MXU4ZmMwaHFuN2V0Mw==" target="_blank" class="social-link-card">
-        <div class="social-icon" style="background:#E1306C">📸</div>
-        <div class="social-info"><div class="social-name">Instagram</div><div class="social-sub">@earnbeuro — Follow us</div></div>
-        <div class="social-arrow">→</div>
-      </a>
-      <a href="https://whatsapp.com/channel/0029VbDPCCr0LKZ66f6Xxz2K" target="_blank" class="social-link-card">
-        <div class="social-icon" style="background:#25D366">💬</div>
-        <div class="social-info"><div class="social-name">WhatsApp Channel</div><div class="social-sub">Join our channel</div></div>
-        <div class="social-arrow">→</div>
-      </a>
+    <!-- BANNER AD -->
+    <div style="padding:12px 16px 6px">
+      <div id="adsgramBannerWrap" style="width:100%;min-height:60px;background:var(--bg2);border:1px solid var(--border);border-radius:12px;overflow:hidden;display:flex;align-items:center;justify-content:center">
+        <span style="font-size:11px;color:var(--text3)">Advertisement</span>
+      </div>
     </div>
 
-    <!-- MISSIONS -->
-    <div style="padding:0 16px 6px;display:flex;align-items:center;justify-content:space-between">
-      <div class="section-title" style="font-size:13px;font-weight:700;letter-spacing:1px;text-transform:uppercase;margin:0">⚡ Missions</div>
-      <div style="font-size:12px;color:var(--text3)" id="missionProgress">0/50 claimed</div>
+    <!-- SOCIAL FOLLOW & EARN -->
+    <div style="padding:10px 16px 6px;display:flex;align-items:center;justify-content:space-between">
+      <div class="section-title" style="font-size:13px;font-weight:700;letter-spacing:1px;text-transform:uppercase;margin:0">🔗 Follow &amp; Earn ₹40</div>
     </div>
-    <div style="padding:0 16px 6px;font-size:12px;color:var(--text3)">Complete in order • Each adds ₹ value directly to your balance</div>
-    <div style="padding:0 16px 80px" id="missionsList"></div>
+    <div style="padding:0 16px 14px;display:flex;flex-direction:column;gap:8px">
+
+      <div class="social-task-card" id="stask_bullx">
+        <div class="social-icon" style="background:#229ED9">🐂</div>
+        <div class="social-info">
+          <div class="social-name">BullX Mining</div>
+          <div class="social-sub">Join on Telegram • <span style="color:var(--gold-dark);font-weight:700">+₹40</span></div>
+        </div>
+        <button class="stask-btn" id="stask_bullx_btn" onclick="doSocialTask('bullx','https://t.me/bullxminingbot/bullxmining')">Join &amp; Claim</button>
+      </div>
+
+      <div class="social-task-card" id="stask_scorpio">
+        <div class="social-icon" style="background:#5B4FCF">🦂</div>
+        <div class="social-info">
+          <div class="social-name">Scorpio Miner</div>
+          <div class="social-sub">Join on Telegram • <span style="color:var(--gold-dark);font-weight:700">+₹40</span></div>
+        </div>
+        <button class="stask-btn" id="stask_scorpio_btn" onclick="doSocialTask('scorpio','https://t.me/Tap2scorpiobot/Scorpiomining')">Join &amp; Claim</button>
+      </div>
+
+      <div class="social-task-card" id="stask_insta">
+        <div class="social-icon" style="background:#E1306C">📸</div>
+        <div class="social-info">
+          <div class="social-name">Instagram</div>
+          <div class="social-sub">Follow @earnbeuro • <span style="color:var(--gold-dark);font-weight:700">+₹40</span></div>
+        </div>
+        <button class="stask-btn" id="stask_insta_btn" onclick="doSocialTask('insta','https://www.instagram.com/earnbeuro?igsh=MXU4ZmMwaHFuN2V0Mw==')">Follow &amp; Claim</button>
+      </div>
+
+      <div class="social-task-card" id="stask_wa">
+        <div class="social-icon" style="background:#25D366">💬</div>
+        <div class="social-info">
+          <div class="social-name">WhatsApp Channel</div>
+          <div class="social-sub">Join channel • <span style="color:var(--gold-dark);font-weight:700">+₹40</span></div>
+        </div>
+        <button class="stask-btn" id="stask_wa_btn" onclick="doSocialTask('wa','https://whatsapp.com/channel/0029VbDPCCr0LKZ66f6Xxz2K')">Join &amp; Claim</button>
+      </div>
+
+    </div>
   </div>
 </div>
 
@@ -448,6 +484,7 @@ body{font-family:'Rajdhani',sans-serif;background:var(--bg);color:var(--text);mi
         <div class="w-card-val" id="wTaskEarned">0</div>
       </div>
     </div>
+    <button onclick="openWithdrawModal()" style="width:100%;padding:14px;border-radius:14px;border:none;background:linear-gradient(135deg,#22C55E,#16A34A);color:#fff;font-family:'Rajdhani',sans-serif;font-size:16px;font-weight:700;cursor:pointer;margin-bottom:14px;letter-spacing:0.5px">💸 Withdraw Earnings</button>
     <div class="tx-list">
       <div class="tx-header">Recent Activity</div>
       <div id="txList"></div>
@@ -511,18 +548,47 @@ body{font-family:'Rajdhani',sans-serif;background:var(--bg);color:var(--text);mi
 <!-- PROFILE PIC HINT -->
 <script>
 // =================== STATE ===================
-let state = {
+// =================== CONSTANTS ===================
+const COIN_VALUE = 0.003;
+const BASE_AUTO = 12.5;
+const BASE_TAP = 50;
+const MINING_DURATION = 4*3600;
+
+// =================== PERSIST ===================
+const SAVE_KEY = 'deepxcoin_v1';
+function saveState(){
+  try{
+    const s = Object.assign({}, state);
+    delete s.currentAbilityToClaimKey;
+    delete s.currentMissionId;
+    delete s.currentEarnMissionId;
+    s._savedAt = Date.now();
+    localStorage.setItem(SAVE_KEY, JSON.stringify(s));
+  }catch(e){}
+}
+function loadState(){
+  try{
+    const raw = localStorage.getItem(SAVE_KEY);
+    if(!raw) return null;
+    return JSON.parse(raw);
+  }catch(e){ return null; }
+}
+
+// Default state
+const DEFAULT_STATE = {
   coins: 0,
   totalMined: 0,
   autoMined: 0,
   tapEarned: 0,
   refEarned: 0,
   taskEarned: 0,
+  rupeeBalance: 0,
   tapsToday: 0,
   userName: 'DeepMiner',
   avatarSrc: null,
   miningActive: true,
   miningSecsLeft: 4*3600,
+  miningLastSaved: Date.now(),
   abilities: {
     mining: {active:false,endsAt:0,resetAt:0},
     coin:   {active:false,endsAt:0,resetAt:0},
@@ -530,19 +596,54 @@ let state = {
     turbo2: {active:false,endsAt:0,resetAt:0},
   },
   txLog: [],
+  missions: {claimed:[], waitUntil:0},
+  earnMissions: {claimed:[], waitUntil:0, resetAt:0},
+  socialTasks: {},
+  refEarnedRupees: 0,
   currentAbilityToClaimKey: null,
+  currentMissionId: null,
+  currentEarnMissionId: null,
 };
 
-const COIN_VALUE = 0.003;
+let state = DEFAULT_STATE;
 
-if(!state.missions) state.missions = {claimed:[], waitUntil:0};
-state.currentMissionId = null;
-if(!state.earnMissions) state.earnMissions = {claimed:[], waitUntil:0, resetAt:0};
-state.currentEarnMissionId = null;
-if(!state.rupeeBalance) state.rupeeBalance = 0;
-const BASE_AUTO = 25;
-const BASE_TAP = 100;
-const MINING_DURATION = 4*3600;
+// Load saved state and compute offline mining
+(function(){
+  const saved = loadState();
+  if(saved){
+    state = Object.assign({}, DEFAULT_STATE, saved);
+    // Restore nested objects
+    state.abilities = Object.assign({}, DEFAULT_STATE.abilities, saved.abilities || {});
+    state.missions = saved.missions || {claimed:[], waitUntil:0};
+    state.earnMissions = saved.earnMissions || {claimed:[], waitUntil:0, resetAt:0};
+    state.socialTasks = saved.socialTasks || {};
+    state.txLog = saved.txLog || [];
+    state.currentAbilityToClaimKey = null;
+    
+    
+
+    // OFFLINE MINING: credit coins earned while app was closed
+    const now = Date.now();
+    const savedAt = saved._savedAt || now;
+    const offlineSecs = Math.min((now - savedAt)/1000, 4*3600); // cap 4h
+    if(state.miningActive && state.miningSecsLeft > 0 && offlineSecs > 0){
+      const miningTime = Math.min(offlineSecs, state.miningSecsLeft);
+      const offlineCoins = Math.floor(BASE_AUTO * miningTime); // base rate offline
+      state.coins += offlineCoins;
+      state.totalMined += offlineCoins;
+      state.autoMined += offlineCoins;
+      state.miningSecsLeft = Math.max(0, state.miningSecsLeft - offlineSecs);
+      if(state.miningSecsLeft <= 0) state.miningActive = false;
+      if(offlineCoins > 0){
+        state.txLog.unshift({type:'mine', amount:offlineCoins, label:'Offline Mining (+'+Math.floor(miningTime/60)+'min)', time:new Date().toISOString()});
+      }
+    }
+  }
+})();
+
+// Auto-save every 5 seconds
+setInterval(saveState, 5000);
+
 
 // Coin image embedded as base64 directly in src attributes
 
@@ -573,7 +674,7 @@ function renderTxList(){
       <div class="tx-dot ${tx.type}">${tx.type==='mine'?'⛏':'👆'}</div>
       <div class="tx-info">
         <div class="tx-name">${tx.label}</div>
-        <div class="tx-time">${tx.time.toLocaleTimeString()}</div>
+        <div class="tx-time">${new Date(tx.time).toLocaleTimeString()}</div>
       </div>
       <div class="tx-amount">+${fmt(tx.amount)}</div>
     </div>`).join('');
@@ -733,7 +834,7 @@ function tapCoin(e){
   img.style.transform='scale(0.92)';
   setTimeout(()=>img.style.transform='',100);
   // Log every 10 taps
-  if(state.tapsToday%10===0)addTx('tap',amount*10,'10 Taps Earned');
+  if(state.tapsToday%10===0){addTx('tap',amount*10,'10 Taps Earned');saveState();}
 }
 
 // =================== MINING RESUME ===================
@@ -747,35 +848,83 @@ function resumeMining(){
   closeModal('miningModal');
   showToast('✅ Auto-mining resumed!');
   addTx('mine',0,'Mining Resumed');
+  saveState();
 }
 
 // =================== AD SIMULATION ===================
-function watchAdAndContinue(modalId,barId,noteId,btnId,callback){
-  const btn=document.getElementById(btnId);
-  const bar=document.getElementById(barId);
-  const note=document.getElementById(noteId);
-  btn.disabled=true;btn.textContent='Ad playing...';
-  bar.parentElement.style.display='block';
-  note.style.display='block';
-  let pct=0;
-  const iv=setInterval(()=>{
-    pct+=100/30;
-    bar.style.width=Math.min(100,pct)+'%';
-    if(pct>=100){
-      clearInterval(iv);
-      bar.style.width='100%';
-      btn.disabled=false;btn.textContent='Continue ✅';
-      note.textContent='Ad complete!';
-      setTimeout(()=>{
-        bar.style.width='0%';
-        bar.parentElement.style.display='none';
-        note.style.display='none';
-        note.textContent='Ad playing... please wait';
-        btn.textContent='Watch & Continue ▶';
-        callback();
-      },600);
+// =================== ADSGRAM ===================
+const REWARDED_AD_ID = '34117';
+const BANNER_AD_ID   = '34118';
+
+function initBannerAd(){
+  try{
+    if(window.Adsgram){
+      const banner = Adsgram.init({blockId: BANNER_AD_ID, type: 'banner'});
+      banner.show().catch(()=>{});
     }
-  },100);
+  }catch(e){}
+}
+
+function watchAdAndContinue(modalId, barId, noteId, btnId, callback){
+  const btn  = document.getElementById(btnId);
+  const bar  = document.getElementById(barId);
+  const note = document.getElementById(noteId);
+
+  if(window.Adsgram){
+    btn.disabled = true;
+    btn.textContent = 'Loading ad...';
+    try{
+      const AdController = Adsgram.init({blockId: REWARDED_AD_ID});
+      AdController.addEventListener('onReward', ()=>{
+        btn.disabled = false;
+        btn.textContent = 'Continue ✅';
+        setTimeout(()=>{
+          btn.textContent = 'Watch & Continue ▶';
+          callback();
+        }, 400);
+      });
+      AdController.addEventListener('onError', ()=>{
+        btn.disabled = false;
+        btn.textContent = 'Retry ▶';
+        showToast('Ad failed. Try again.');
+      });
+      AdController.addEventListener('onSkip', ()=>{
+        btn.disabled = false;
+        btn.textContent = 'Watch & Continue ▶';
+        showToast('Please watch the full ad.');
+      });
+      AdController.show();
+    } catch(e){
+      // Fallback simulation if Adsgram not available
+      _simulateAd(btn, bar, note, callback);
+    }
+  } else {
+    // Simulation fallback
+    _simulateAd(btn, bar, note, callback);
+  }
+}
+
+function _simulateAd(btn, bar, note, callback){
+  btn.disabled = true;
+  btn.textContent = 'Ad playing...';
+  if(bar){ bar.parentElement.style.display='block'; }
+  if(note){ note.style.display='block'; note.textContent='Ad playing... please wait'; }
+  let pct = 0;
+  const iv = setInterval(()=>{
+    pct += 100/30;
+    if(bar) bar.style.width = Math.min(100,pct)+'%';
+    if(pct >= 100){
+      clearInterval(iv);
+      if(bar){ bar.style.width='0%'; bar.parentElement.style.display='none'; }
+      if(note){ note.style.display='none'; note.textContent='Ad playing... please wait'; }
+      btn.disabled = false;
+      btn.textContent = 'Continue ✅';
+      setTimeout(()=>{
+        btn.textContent = 'Watch & Continue ▶';
+        callback();
+      }, 400);
+    }
+  }, 100);
 }
 
 // =================== ABILITIES ===================
@@ -1067,7 +1216,7 @@ const EARN_MISSIONS = Array.from({length:50}, (_,i) => ({
 }));
 const EARN_RESET_MS = 6 * 3600 * 1000; // 6 hours
 
-if(!state.earnMissions) state.earnMissions = {claimed:[], waitUntil:0, resetAt:0};
+
 
 function fmtEarnReset(ms){
   const total = Math.ceil(ms/1000);
@@ -1176,7 +1325,7 @@ function creditEarnMission(id){
   state.coins += coinsToAdd;
   state.totalMined += coinsToAdd;
   state.taskEarned += coinsToAdd;
-  if(!state.rupeeBalance) state.rupeeBalance = 0;
+  
   state.rupeeBalance += m.rupees;
   addTx('mine', coinsToAdd, 'Mission ' + id + ' +₹' + m.rupees);
   showToast('🎉 +₹' + m.rupees + ' added to your balance!');
@@ -1218,7 +1367,11 @@ setInterval(()=>{
 // Patch startAbilityAd for earn mission mode
 const _origStartAbilityAd2 = startAbilityAd;
 startAbilityAd = function(){
-  if(window._earnMissionAdMode){
+  if(window._socialAdMode){
+    window._socialAdMode = false;
+    watchAdAndContinue('abilityModal','adBar2','adNote2','watchAbilityBtn',
+      ()=>creditSocialTask(state._pendingSocialKey));
+  } else if(window._earnMissionAdMode){
     window._earnMissionAdMode = false;
     watchAdAndContinue('abilityModal','adBar2','adNote2','watchAbilityBtn',
       ()=>creditEarnMission(state.currentEarnMissionId));
@@ -1233,6 +1386,111 @@ switchPage = function(name){
   _origSwitchPage2(name);
   if(name==='earn') renderEarnMissions();
 };
+
+
+// =================== SOCIAL TASKS ===================
+const SOCIAL_RUPEES = 40;
+function doSocialTask(key, url){
+  if(state.socialTasks && state.socialTasks[key]){
+    showToast('Already claimed!'); return;
+  }
+  // Open link first
+  window.open(url, '_blank');
+  // Then show ad to claim
+  state._pendingSocialKey = key;
+  document.getElementById('abilityModalIcon').textContent = '🔗';
+  document.getElementById('abilityModalTitle').textContent = 'Claim ₹40 Reward';
+  document.getElementById('abilityModalSub').textContent = 'Watch a short ad to confirm and earn +₹40 directly to your balance!';
+  document.getElementById('watchAbilityBtn').disabled = false;
+  document.getElementById('watchAbilityBtn').textContent = 'Claim ▶';
+  document.getElementById('adBar2').style.width = '0%';
+  document.getElementById('adProgress2').style.display = 'none';
+  document.getElementById('adNote2').style.display = 'none';
+  window._socialAdMode = true;
+  openModal('abilityModal');
+}
+function creditSocialTask(key){
+  if(!state.socialTasks) state.socialTasks = {};
+  state.socialTasks[key] = true;
+  const coins = Math.round(SOCIAL_RUPEES / COIN_VALUE);
+  state.coins += coins;
+  state.totalMined += coins;
+  state.taskEarned += coins;
+  state.rupeeBalance = (state.rupeeBalance||0) + SOCIAL_RUPEES;
+  addTx('mine', coins, 'Social Task +₹'+SOCIAL_RUPEES);
+  showToast('🎉 +₹40 added to your balance!');
+  closeModal('abilityModal');
+  // Update button
+  const btn = document.getElementById('stask_'+key+'_btn');
+  const card = document.getElementById('stask_'+key);
+  if(btn){ btn.textContent='✓ Claimed'; btn.className='stask-btn done-stask'; btn.disabled=true; }
+  if(card) card.classList.add('done-task');
+  saveState();
+}
+
+// Restore social task buttons on page load
+function restoreSocialTaskUI(){
+  if(!state.socialTasks) return;
+  ['bullx','scorpio','insta','wa'].forEach(key=>{
+    if(state.socialTasks[key]){
+      const btn = document.getElementById('stask_'+key+'_btn');
+      const card = document.getElementById('stask_'+key);
+      if(btn){ btn.textContent='✓ Claimed'; btn.className='stask-btn done-stask'; btn.disabled=true; }
+      if(card) card.classList.add('done-task');
+    }
+  });
+}
+
+// =================== WITHDRAWAL ===================
+const VALID_DROPCODES = []; // Only admin-set dropcodes work; empty = all fail
+
+function openWithdrawModal(){
+  document.getElementById('wdError').style.display='none';
+  document.getElementById('wdSuccess').style.display='none';
+  document.getElementById('wdAdProgress').style.display='none';
+  document.getElementById('wdSubmitBtn').textContent='Submit Withdrawal';
+  document.getElementById('wdSubmitBtn').disabled=false;
+  openModal('withdrawModal');
+}
+
+function submitWithdraw(){
+  const name   = document.getElementById('wd_name').value.trim();
+  const mobile = document.getElementById('wd_mobile').value.trim();
+  const state_ = document.getElementById('wd_state').value.trim();
+  const pin    = document.getElementById('wd_pin').value.trim();
+  const wallet = document.getElementById('wd_wallet').value.trim();
+  const drop   = document.getElementById('wd_drop').value.trim();
+  const errEl  = document.getElementById('wdError');
+  const sucEl  = document.getElementById('wdSuccess');
+
+  errEl.style.display='none'; sucEl.style.display='none';
+
+  if(!name||!mobile||!state_||!pin||!wallet||!drop){
+    errEl.textContent='❌ Please fill all fields.'; errEl.style.display='block'; return;
+  }
+  if(mobile.length !== 10 || isNaN(mobile)){
+    errEl.textContent='❌ Enter a valid 10-digit mobile number.'; errEl.style.display='block'; return;
+  }
+  if(pin.length !== 6 || isNaN(pin)){
+    errEl.textContent='❌ Enter a valid 6-digit pincode.'; errEl.style.display='block'; return;
+  }
+
+  // Show ad first
+  const btn = document.getElementById('wdSubmitBtn');
+  watchAdAndContinue('withdrawModal','wdAdBar','wdAdNote','wdSubmitBtn', ()=>{
+    // After ad - check dropcode
+    if(VALID_DROPCODES.length === 0 || !VALID_DROPCODES.includes(drop.toUpperCase())){
+      errEl.textContent='❌ Payment Failed: Invalid Dropcode. Contact admin for a valid dropcode.';
+      errEl.style.display='block';
+      btn.textContent='Submit Withdrawal';
+      btn.disabled=false;
+    } else {
+      sucEl.textContent='✅ Withdrawal request submitted! You will receive payment within 24-48 hours.';
+      sucEl.style.display='block';
+      btn.style.display='none';
+    }
+  });
+}
 
 // =================== TELEGRAM INIT ===================
 if(window.Telegram&&window.Telegram.WebApp){
@@ -1252,6 +1510,75 @@ if(window.Telegram&&window.Telegram.WebApp){
 // Initial render
 updateAllUI();
 renderTxList();
+renderEarnMissions();
+setTimeout(()=>{
+  restoreSocialTaskUI();
+  initBannerAd();
+}, 300);
+// Restore profile
+if(state.avatarSrc){
+  const av = document.getElementById('avatarDisplay');
+  av.innerHTML = '';
+  const img = document.createElement('img');
+  img.src = state.avatarSrc;
+  img.style.cssText='width:52px;height:52px;border-radius:50%;object-fit:cover;border:2px solid var(--gold)';
+  av.appendChild(img);
+  av.style.background='transparent';
+}
+if(state.userName && state.userName !== 'DeepMiner'){
+  document.getElementById('profileNameDisplay').textContent = state.userName;
+  document.getElementById('profileNameInput').value = state.userName;
+  const av = document.getElementById('avatarDisplay');
+  if(!state.avatarSrc) av.textContent = state.userName.charAt(0).toUpperCase();
+}
 </script>
+
+<!-- WITHDRAWAL MODAL -->
+<div class="modal-overlay" id="withdrawModal">
+  <div class="modal-box" style="max-height:90vh;overflow-y:auto">
+    <div style="text-align:center;font-size:36px;margin-bottom:6px">💸</div>
+    <div class="modal-title">Withdraw Earnings</div>
+    <div class="modal-sub" style="margin-bottom:4px">Fill all details carefully. Incorrect dropcode will fail payment.</div>
+
+    <div id="wdFormArea">
+      <div class="wd-form">
+        <div>
+          <div class="wd-label">Full Name</div>
+          <input class="wd-input" id="wd_name" placeholder="Enter your full name">
+        </div>
+        <div>
+          <div class="wd-label">Mobile Number</div>
+          <input class="wd-input" id="wd_mobile" placeholder="10-digit mobile number" maxlength="10" type="tel">
+        </div>
+        <div class="wd-row">
+          <div>
+            <div class="wd-label">State</div>
+            <input class="wd-input" id="wd_state" placeholder="Your state">
+          </div>
+          <div>
+            <div class="wd-label">Pincode</div>
+            <input class="wd-input" id="wd_pin" placeholder="6-digit PIN" maxlength="6" type="tel">
+          </div>
+        </div>
+        <div>
+          <div class="wd-label">Wallet Address (UPI / Bank)</div>
+          <input class="wd-input" id="wd_wallet" placeholder="UPI ID or bank account">
+        </div>
+        <div>
+          <div class="wd-label">Dropcode <span style="color:var(--text3);font-weight:400">(provided by admin only)</span></div>
+          <input class="wd-input" id="wd_drop" placeholder="Enter your dropcode">
+        </div>
+      </div>
+      <div class="wd-error" id="wdError"></div>
+      <div class="wd-success" id="wdSuccess"></div>
+      <div class="ad-progress" id="wdAdProgress" style="display:none"><div class="ad-progress-bar" id="wdAdBar"></div></div>
+      <div class="ad-note" id="wdAdNote" style="display:none">Please watch the ad to continue...</div>
+      <button class="modal-btn primary" id="wdSubmitBtn" onclick="submitWithdraw()" style="margin-top:6px">Submit Withdrawal</button>
+      <button class="modal-btn secondary" onclick="closeModal('withdrawModal')">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<!-- SOCIAL TASK AD MODAL - reuse abilityModal -->
 </body>
 </html>
