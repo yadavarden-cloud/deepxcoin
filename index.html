@@ -549,7 +549,7 @@ body{font-family:'Rajdhani',sans-serif;background:var(--bg);color:var(--text);mi
 <script>
 // =================== STATE ===================
 // =================== CONSTANTS ===================
-const COIN_VALUE = 0.0012;
+const COIN_VALUE = 0.012;
 const BASE_AUTO = 12.5;
 const BASE_TAP = 50;
 const MINING_DURATION = 4*3600;
@@ -853,8 +853,8 @@ function resumeMining(){
 
 // =================== AD SIMULATION ===================
 // =================== ADSGRAM ===================
-const REWARDED_AD_ID = '34117';
-const BANNER_AD_ID   = '34118';
+const REWARDED_AD_ID = 'task-34117';
+const BANNER_AD_ID   = 'task-34118';
 
 function initBannerAd(){
   try{
@@ -953,7 +953,22 @@ function claimAbility(key){
   openModal('abilityModal');
 }
 function startAbilityAd(){
-  watchAdAndContinue('abilityModal','adBar2','adNote2','watchAbilityBtn',activateAbility);
+  // Central dispatcher — checks mode flags in priority order
+  if(window._socialAdMode){
+    window._socialAdMode = false;
+    watchAdAndContinue('abilityModal','adBar2','adNote2','watchAbilityBtn',
+      function(){ creditSocialTask(state._pendingSocialKey); });
+  } else if(window._earnMissionAdMode){
+    window._earnMissionAdMode = false;
+    watchAdAndContinue('abilityModal','adBar2','adNote2','watchAbilityBtn',
+      function(){ creditEarnMission(state.currentEarnMissionId); });
+  } else if(window._missionAdMode){
+    window._missionAdMode = false;
+    watchAdAndContinue('abilityModal','adBar2','adNote2','watchAbilityBtn',
+      function(){ creditMission(state.currentMissionId); });
+  } else {
+    watchAdAndContinue('abilityModal','adBar2','adNote2','watchAbilityBtn',activateAbility);
+  }
 }
 function activateAbility(){
   const key=state.currentAbilityToClaimKey;
@@ -1017,7 +1032,7 @@ function switchPage(name){
   document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
   document.getElementById('page-'+name).classList.add('active');
   document.getElementById('nav-'+name).classList.add('active');
-  if(name==='tasks')renderMissions();
+  if(name==='tasks'){ renderMissions(); initBannerAd(); }
 }
 
 // =================== PROFILE ===================
@@ -1197,16 +1212,6 @@ setInterval(()=>{
   }
 },1000);
 
-// Patch ability ad to handle mission mode
-const _origStartAbilityAd=startAbilityAd;
-startAbilityAd=function(){
-  if(window._missionAdMode){
-    window._missionAdMode=false;
-    watchAdAndContinue('abilityModal','adBar2','adNote2','watchAbilityBtn',()=>creditMission(state.currentMissionId));
-  } else {
-    _origStartAbilityAd();
-  }
-};
 
 
 // =================== EARN MISSIONS (RUPEE) ===================
@@ -1378,21 +1383,7 @@ setInterval(()=>{
   }
 }, 500);
 
-// Patch startAbilityAd for earn mission mode
-const _origStartAbilityAd2 = startAbilityAd;
-startAbilityAd = function(){
-  if(window._socialAdMode){
-    window._socialAdMode = false;
-    watchAdAndContinue('abilityModal','adBar2','adNote2','watchAbilityBtn',
-      ()=>creditSocialTask(state._pendingSocialKey));
-  } else if(window._earnMissionAdMode){
-    window._earnMissionAdMode = false;
-    watchAdAndContinue('abilityModal','adBar2','adNote2','watchAbilityBtn',
-      ()=>creditEarnMission(state.currentEarnMissionId));
-  } else {
-    _origStartAbilityAd2();
-  }
-};
+// Ad dispatch handled centrally in startAbilityAd
 
 // // Render earn missions when earn tab opened
 const _origSwitchPage2 = switchPage;
@@ -1527,7 +1518,6 @@ renderTxList();
 renderEarnMissions();
 setTimeout(()=>{
   restoreSocialTaskUI();
-  initBannerAd();
 }, 300);
 // Restore profile
 if(state.avatarSrc){
