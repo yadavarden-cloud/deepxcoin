@@ -404,10 +404,20 @@ body{font-family:'Rajdhani',sans-serif;background:var(--bg);color:var(--text);mi
 <!-- TASKS PAGE -->
 <div class="page" id="page-tasks">
   <div class="tasks-page">
-    <!-- BANNER AD -->
+    <!-- PROMO BANNER -->
     <div style="padding:12px 16px 6px">
-      <div id="adsgramBannerWrap" style="width:100%;min-height:60px;background:var(--bg2);border:1px solid var(--border);border-radius:12px;overflow:hidden;display:flex;align-items:center;justify-content:center">
-        <span style="font-size:11px;color:var(--text3)">Advertisement</span>
+      <!-- Adsgram Banner Ad Container -->
+      <div id="adsgramBannerWrap" style="width:100%;min-height:60px;border-radius:12px;overflow:hidden;background:var(--bg2);display:flex;align-items:center;justify-content:center">
+        <!-- Fallback promo shown until Adsgram loads -->
+        <div id="adsgramFallback" style="background:linear-gradient(135deg,#1a1a2e,#16213e,#0f3460);border-radius:12px;padding:14px 16px;display:flex;align-items:center;gap:12px;width:100%;position:relative;overflow:hidden">
+          <div style="position:absolute;top:-20px;right:-20px;width:100px;height:100px;background:rgba(245,166,35,0.08);border-radius:50%"></div>
+          <div style="font-size:32px;flex-shrink:0">🪙</div>
+          <div style="flex:1">
+            <div style="font-family:'Orbitron',monospace;font-size:13px;font-weight:900;color:#FFD166">DeepXCoin</div>
+            <div style="font-size:11px;color:rgba(255,255,255,0.8);margin-top:2px">Mine 24x7 • Tap to earn • Invite &amp; get ₹10</div>
+          </div>
+          <div style="background:linear-gradient(135deg,#F5A623,#FFD166);border-radius:8px;padding:6px 12px;font-size:12px;font-weight:700;color:#1a1a2e;flex-shrink:0">Mine Now</div>
+        </div>
       </div>
     </div>
 
@@ -851,48 +861,86 @@ function resumeMining(){
 }
 
 // =================== AD SIMULATION ===================
-// =================== AD SYSTEM ===================
+// =================== AD SYSTEM (ADSGRAM) ===================
 const REWARDED_AD_ID = 'task-34117';
 const BANNER_AD_ID   = 'task-34118';
 
-function initBannerAd(){
-  // Banner shown as placeholder - Adsgram loads in Telegram environment
-  const wrap = document.getElementById('adsgramBannerWrap');
-  if(wrap) wrap.innerHTML = '<div style="padding:10px;text-align:center;font-size:11px;color:var(--text3)">📢 Advertisement</div>';
+// Load Adsgram SDK dynamically
+function loadAdsgramSDK(cb){
+  if(window.Adsgram){ cb(); return; }
+  const existing = document.getElementById('adsgram-sdk');
+  if(existing){ existing.addEventListener('load', cb); return; }
+  const s = document.createElement('script');
+  s.id = 'adsgram-sdk';
+  s.src = 'https://sad.adsgram.ai/js/sad.min.js';
+  s.async = true;
+  s.onload = () => { cb(); };
+  s.onerror = () => { cb(); }; // fallback to simulation
+  document.head.appendChild(s);
 }
 
+// BANNER AD — call when Tasks page opens
+function initBannerAd(){
+  const wrap = document.getElementById('adsgramBannerWrap');
+  if(!wrap) return;
+  loadAdsgramSDK(()=>{
+    try{
+      if(window.Adsgram){
+        // Create inner container for banner injection
+        let container = document.getElementById('adsgram-banner-container');
+        if(!container){
+          container = document.createElement('div');
+          container.id = 'adsgram-banner-container';
+          wrap.innerHTML = '';
+          wrap.appendChild(container);
+        }
+        const banner = Adsgram.init({ blockId: BANNER_AD_ID });
+        banner.show().catch(()=>{});
+      }
+    } catch(e){ console.log('Banner ad error:', e); }
+  });
+}
+
+// REWARDED AD — called before every claim
 function watchAdAndContinue(modalId, barId, noteId, btnId, callback){
   const btn  = document.getElementById(btnId);
   const bar  = document.getElementById(barId);
   const note = document.getElementById(noteId);
 
-  // Try Adsgram if available in Telegram environment
-  try{
-    if(window.Adsgram && window.Telegram && window.Telegram.WebApp){
-      btn.disabled = true;
-      btn.textContent = 'Loading ad...';
-      const AdController = window.Adsgram.init({blockId: REWARDED_AD_ID});
-      AdController.addEventListener('onReward', ()=>{
-        btn.disabled = false;
-        btn.textContent = 'Watch & Continue ▶';
-        callback();
-      });
-      AdController.addEventListener('onError', ()=>{
-        btn.disabled = false;
-        btn.textContent = 'Watch & Continue ▶';
-        showToast('Ad unavailable. Try again.');
-      });
-      AdController.addEventListener('onSkip', ()=>{
-        btn.disabled = false;
-        btn.textContent = 'Watch & Continue ▶';
-        showToast('Watch the full ad to claim.');
-      });
-      AdController.show();
-      return;
-    }
-  } catch(e){ /* fall through to simulation */ }
+  btn.disabled = true;
+  btn.textContent = 'Loading Ad...';
 
-  // Simulation (browser testing / fallback)
+  loadAdsgramSDK(()=>{
+    if(window.Adsgram){
+      try{
+        const AdController = Adsgram.init({ blockId: REWARDED_AD_ID });
+        AdController.addEventListener('onReward', () => {
+          btn.disabled = false;
+          btn.textContent = 'Watch & Continue ▶';
+          callback();
+        });
+        AdController.addEventListener('onError', () => {
+          btn.disabled = false;
+          btn.textContent = 'Watch & Continue ▶';
+          showToast('Ad not available, try again.');
+        });
+        AdController.addEventListener('onSkip', () => {
+          btn.disabled = false;
+          btn.textContent = 'Watch & Continue ▶';
+          showToast('Please watch the full ad to claim.');
+        });
+        AdController.show();
+        return;
+      } catch(e){
+        console.log('Rewarded ad error:', e);
+      }
+    }
+    // Fallback simulation (browser / no ad available)
+    _simulateAd(btn, bar, note, callback);
+  });
+}
+
+function _simulateAd(btn, bar, note, callback){
   btn.disabled = true;
   btn.textContent = 'Ad playing...';
   if(bar && bar.parentElement){ bar.parentElement.style.display='block'; }
