@@ -1238,15 +1238,17 @@ function renderEarnMissions(){
     state.earnMissions.resetAt = 0;
   }
 
-  const claimed = state.earnMissions.claimed;
-  const allDone = claimed.length === 50;
+  // Use a Set for O(1) lookup — fixes the bug where index mismatch caused wrong unlocking
+  const claimedSet = new Set(state.earnMissions.claimed);
+  const claimedCount = claimedSet.size;
+  const allDone = claimedCount === 50;
   const inReset = allDone && state.earnMissions.resetAt && now < state.earnMissions.resetAt;
 
   // Progress
   const prog = document.getElementById('earnMissionProgress');
-  if(prog) prog.textContent = claimed.length + '/50 claimed';
+  if(prog) prog.textContent = claimedCount + '/50 claimed';
 
-  // If all done and waiting for reset, show big countdown banner
+  // All done — show countdown banner
   if(inReset){
     const remaining = state.earnMissions.resetAt - now;
     el.innerHTML = `
@@ -1260,18 +1262,25 @@ function renderEarnMissions(){
     return;
   }
 
-  const nextIdx = claimed.length;
+  // Find the exact next mission ID to unlock (first unclaimed in order 1..50)
+  let nextMissionId = null;
+  for(let i = 1; i <= 50; i++){
+    if(!claimedSet.has(i)){ nextMissionId = i; break; }
+  }
+
+  const isWaiting = nextMissionId && state.earnMissions.waitUntil && now < state.earnMissions.waitUntil;
+
   let out = '';
-  EARN_MISSIONS.forEach((m, i) => {
-    const isDone   = claimed.includes(m.id);
-    const isNext   = (i === nextIdx);
-    const isWait   = isNext && state.earnMissions.waitUntil && now < state.earnMissions.waitUntil;
+  EARN_MISSIONS.forEach((m) => {
+    const isDone   = claimedSet.has(m.id);
+    const isNext   = (m.id === nextMissionId);
+    const isWait   = isNext && isWaiting;
     const isLocked = !isDone && !isNext;
 
-    let numClass = isDone ? 'e-done' : isNext ? 'e-active' : 'e-lock';
-    let numTxt   = isDone ? '✓' : m.id;
-    let itemClass= isDone ? 'e-claimed' : isLocked ? 'e-locked' : '';
-    let rwClass  = isDone ? 'done-reward' : isLocked ? 'lock-reward' : 'active-reward';
+    const numClass  = isDone ? 'e-done' : isNext ? 'e-active' : 'e-lock';
+    const numTxt    = isDone ? '✓' : m.id;
+    const itemClass = isDone ? 'e-claimed' : isLocked ? 'e-locked' : '';
+    const rwClass   = isDone ? 'done-reward' : isLocked ? 'lock-reward' : 'active-reward';
 
     let btn = '';
     if(isDone){
@@ -1314,7 +1323,7 @@ function claimEarnMission(id){
 
 function creditEarnMission(id){
   const m = EARN_MISSIONS[id-1];
-  state.earnMissions.claimed.push(id);
+  if(!state.earnMissions.claimed.includes(id)) state.earnMissions.claimed.push(id);
   // 20s wait between missions
   state.earnMissions.waitUntil = Date.now() + 20000;
   // If last mission just claimed, set 6h reset timer
@@ -1355,9 +1364,14 @@ setInterval(()=>{
 
   // 20s between missions
   if(state.earnMissions.waitUntil && now < state.earnMissions.waitUntil){
-    const nxt = state.earnMissions.claimed.length + 1;
-    const el = document.getElementById('emwait_' + nxt);
-    if(el) el.textContent = Math.ceil((state.earnMissions.waitUntil - now)/1000) + 's';
+    // Find actual next unclaimed mission
+    const claimedSet2 = new Set(state.earnMissions.claimed);
+    let nxtId = null;
+    for(let i=1;i<=50;i++){ if(!claimedSet2.has(i)){nxtId=i;break;} }
+    if(nxtId){
+      const el2 = document.getElementById('emwait_' + nxtId);
+      if(el2) el2.textContent = Math.ceil((state.earnMissions.waitUntil - now)/1000) + 's';
+    }
   } else if(state.earnMissions.waitUntil && now >= state.earnMissions.waitUntil){
     state.earnMissions.waitUntil = 0;
     renderEarnMissions();
